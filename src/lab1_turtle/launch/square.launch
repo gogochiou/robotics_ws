@@ -1,0 +1,6 @@
+<launch>
+
+    <node pkg="turtlesim" type="turtlesim_node" name="turtlesim_node" output="screen" />
+    <node pkg="lab1_turtle" type="square" name="square" output="screen" />
+
+</launch>
