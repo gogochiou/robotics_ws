@@ -1,2 +1,2 @@
-lab1_turtle
+lab1_turtle:myrobot/myrobot_control:myrobot/myrobot_description:myrobot/myrobot_gazebo
 -DCATKIN_DEVEL_PREFIX=/home/gogochiou/robotics_ws/devel -DCMAKE_INSTALL_PREFIX=/home/gogochiou/robotics_ws/install -G Unix Makefiles

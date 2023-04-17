@@ -6,3 +6,6 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs("gtest")
 subdirs("lab1_turtle")
+subdirs("myrobot/myrobot_description")
+subdirs("myrobot/myrobot_gazebo")
+subdirs("myrobot/myrobot_control")

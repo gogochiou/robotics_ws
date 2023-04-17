@@ -132,6 +132,9 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/gogochiou/robotics_ws/build/gtest/cmake_install.cmake")
   include("/home/gogochiou/robotics_ws/build/lab1_turtle/cmake_install.cmake")
+  include("/home/gogochiou/robotics_ws/build/myrobot/myrobot_description/cmake_install.cmake")
+  include("/home/gogochiou/robotics_ws/build/myrobot/myrobot_gazebo/cmake_install.cmake")
+  include("/home/gogochiou/robotics_ws/build/myrobot/myrobot_control/cmake_install.cmake")
 
 endif()
 
