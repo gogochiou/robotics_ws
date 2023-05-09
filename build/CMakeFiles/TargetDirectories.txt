@@ -35,6 +35,14 @@
 /home/gogochiou/robotics_ws/build/gtest/googlemock/gtest/CMakeFiles/list_install_components.dir
 /home/gogochiou/robotics_ws/build/gtest/googlemock/gtest/CMakeFiles/gtest.dir
 /home/gogochiou/robotics_ws/build/gtest/googlemock/gtest/CMakeFiles/rebuild_cache.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/install/strip.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/install/local.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/test.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/list_install_components.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/edit_cache.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/_catkin_empty_exported_target.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/rebuild_cache.dir
+/home/gogochiou/robotics_ws/build/myplan/CMakeFiles/install.dir
 /home/gogochiou/robotics_ws/build/lab1_turtle/CMakeFiles/install/strip.dir
 /home/gogochiou/robotics_ws/build/lab1_turtle/CMakeFiles/install/local.dir
 /home/gogochiou/robotics_ws/build/lab1_turtle/CMakeFiles/rebuild_cache.dir

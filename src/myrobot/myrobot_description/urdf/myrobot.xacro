@@ -105,6 +105,7 @@
     <!--gear_ratio motor to j1 = 40/14-->
     <!-- effort: 0.12*9.81(N*m)*40/14-->
     <!--velo:     74*2pi/60(rad/s)/(40/14)-->
+    <!--accela:     2.71224*30, remember to set in moveit-->
     <!--damp: after close_loop control ~1.0-->
     <!--fric: tested start volt = 3.8v, so 3.8v/12v*4.20429-->
 	
@@ -335,6 +336,18 @@
     </inertial>
     <!-- set 0 if no rotation of the axis to prevent Gazebo strange behavior -->
   </link>
+
+	<!--joint5-->
+   <joint name="joint5" type="fixed">
+     <parent link="link4"/>
+     <child link="link5"/>
+     <origin xyz="0.004 0 0.048" rpy="0 0 0"/>
+   </joint>
+
+  <!--link5-->
+  <link name="link5">
+  </link>
+
 
 
 <transmission name="tran1">

@@ -1,0 +1,8 @@
+prefix=/home/gogochiou/robotics_ws/install
+
+Name: myplan
+Description: Description of myplan
+Version: 0.3.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
