@@ -176,9 +176,9 @@ if __name__=="__main__":
             key = getKey(settings, key_timeout)
             if key in moveBindings.keys():
                 j1 += moveBindings[key][0]*step
-                j2 = moveBindings[key][1]*step
-                j3 = moveBindings[key][2]*step
-                j4 = moveBindings[key][3]*step
+                j2 += moveBindings[key][1]*step
+                j3 += moveBindings[key][2]*step
+                j4 += moveBindings[key][3]*step
             elif key in stepBindings.keys():
                 step += stepBindings[key]
             else:
