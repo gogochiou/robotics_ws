@@ -33,7 +33,10 @@ l3 = 0.1664
 l4 = 0.048
 d4 = 0.004
 
-'''Hanoi tower param'''
+'''
+Hanoi tower param - 
+    @ Modify parameter : place_height, pose_dict, offset, via_point_offset 
+'''
 ### A  B  C
 ###    ^     (arm direction)     
 ###   arm
@@ -42,6 +45,7 @@ place_height = [Tower_base + Tower_heitght + 0.005, Tower_base + Tower_heitght*2
 path = [] # record path
 cap_dict = {"A":0, "B":0, "C":0} # record capacity
 pose_dict = {"A":[0.25, 0.15], "B":[0.25, 0], "C":[0.25, -0.15]} # tower base xy position
+via_point_offset = 0.01
 
 '''
 Hint:
@@ -265,20 +269,25 @@ def set_hanoi_path(source,destination,num):
     pose_source = list(pose_dict[source])  # without list(), pose_source wil be same as pose_dict[source] (memory position is same also) 
     pose_source.append(place_height[cap_source-1]) # need to -1 !!
     pose_source.append("suck")
-    pose_source.append(disk_number)
+    pose_source.append(source)
 
     cap_destination = cap_dict[destination]
     pose_destination = list(pose_dict[destination])
-    pose_destination.append(place_height[cap_destination]) # no need to -1 !!
+    pose_destination.append(place_height[cap_destination])
     pose_destination.append("drop")
-    pose_destination.append(disk_number)
+    pose_destination.append(destination)
+
+    print("Move " + str(disk_number) + " from " + source + " -> " + destination)
+    print([pose_source, pose_destination])
+    
+    # record current cap amount
+    pose_source.append(cap_dict.copy()) 
+    cap_dict[source] = cap_source-1
+    cap_dict[destination] = cap_destination+1
+    pose_destination.append(cap_dict.copy())
 
     path.append(pose_source)
     path.append(pose_destination)
-    print("Move " + str(disk_number) + " from " + source + " -> " + destination)
-    print([pose_source, pose_destination])
-    cap_dict[source] = cap_source-1
-    cap_dict[destination] = cap_destination+1
 
 def hanoi(n, source, auxiliary, destination):
     if n == 1:
@@ -294,6 +303,49 @@ def find_missing_letter(first_letter, second_letter):
     missing_letter = all_letters - {first_letter, second_letter}
     return missing_letter.pop()
 
+def modify_path():
+    global cap_dict, path, place_height, pose_dict, via_point_offset
+    print("Modify path start!")
+    add_pose = 0
+    L = len(path)
+    for i in range(L-1):
+      # path will add some pose each for loop, ii is origin pose index in origin path list
+      print(i)
+      ii = i + add_pose
+
+      # add via point -> Z offset of source
+      print(path[ii])
+      pose_uplift = list(path[ii])
+      pose_uplift[2] = pose_uplift[2] + via_point_offset
+      pose_uplift[3] = "keep"
+
+      # add via point -> Z offset of destination
+      pose_downlift = list(path[ii+1])
+      pose_downlift[2] = pose_downlift[2] + via_point_offset
+      pose_downlift[3] = "keep"
+
+      # add via point -> B have tower, we need to avoid collision
+      auxiliary = find_missing_letter(path[ii][4], path[ii+1][4])
+      cur_cap = path[ii][5]
+      pose_via = []
+      if (auxiliary == "B") and (cur_cap["B"] != 0) and (path[ii][3]=="suck"):
+        print("add via point")
+        pose_via = list(pose_dict["B"])
+        pose_via.append(place_height[cur_cap["B"]] + via_point_offset) 
+        pose_via.append("keep")
+        pose_via.append("via")
+        pose_via.append(cur_cap)
+        # add pose into path list
+        path.insert(ii+1, pose_uplift)
+        path.insert(ii+2, pose_via)
+        path.insert(ii+3, pose_downlift)
+        add_pose = add_pose + 3
+      else:
+        print("add offset point")
+        path.insert(ii+1, pose_uplift)
+        path.insert(ii+2, pose_downlift)
+        add_pose = add_pose + 2
+
 def main():
   global pub_EefState, EefState
   try:
@@ -302,16 +354,16 @@ def main():
 
     raw_input("Press Enter to start ...")
           
-    plane_pose = geometry_msgs.msg.PoseStamped() # Set the parameter
-    plane_pose.header.frame_id = 'world'         # Put the box in 'world' frame
-    plane_pose.pose.orientation.w = 1.0          # Orieantion in quaterian
-    plane_pose.pose.position.x = 0.2             # Specify x of the box
-    plane_pose.pose.position.y = 0.0             # Specify y of the box
-    plane_pose.pose.position.z = -0.03/2         # Specify z of the box
-    path_object.add_box('plane_1', plane_pose, (0.7, 0.7, 0.03)) #Specify box name, box pose, size in xyz
-    print("plane added !")
-    print("Adding Object Over")
-    print("============")
+    # plane_pose = geometry_msgs.msg.PoseStamped() # Set the parameter
+    # plane_pose.header.frame_id = 'world'         # Put the box in 'world' frame
+    # plane_pose.pose.orientation.w = 1.0          # Orieantion in quaterian
+    # plane_pose.pose.position.x = 0.2             # Specify x of the box
+    # plane_pose.pose.position.y = 0.0             # Specify y of the box
+    # plane_pose.pose.position.z = -0.03/2         # Specify z of the box
+    # path_object.add_box('plane_1', plane_pose, (0.7, 0.7, 0.03)) #Specify box name, box pose, size in xyz
+    # print("plane added !")
+    # print("Adding Object Over")
+    # print("============")
 
     while not rospy.is_shutdown():
   
@@ -345,10 +397,13 @@ def main():
           cap_dict[source] = 3
           print(cap_dict)
           hanoi(height, source, auxiliary,destination)
-          print(path)
+          modify_path() # add redundant pose to avoid collision
+          # print(path)
           print("End hanoi calculation")
           print "Total Step : ", len(path)/2
           print("============")
+
+          # tower = ['towerL', 'towerM', 'towerS'] # 0 : towerL, 1 : towerM, 2 : towerS -> for path[0][4]
 
           print("Start Moving")
           while len(path) > 0:
@@ -364,11 +419,12 @@ def main():
             if path[0][3] == "suck":
               EefState = 1
               pub_EefState.publish(EefState)  #publish end-effector state
-              print('Eef1 : ', EefState)
             elif path[0][3] == "drop":
               EefState = 0
               pub_EefState.publish(EefState)  #publish end-effector state
-              print('Eef1 : ', EefState)
+            else:
+              pub_EefState.publish(EefState)
+              
             print('Eef : ', EefState)
 
             path.pop(0)
@@ -376,6 +432,7 @@ def main():
           # Go back home position
           path_object.joint_angles = [0,-pi/2,pi/2,0]
           path_object.go_to_joint_state()
+          pub_EefState.publish(0)
           print("End Moving")
           print("============")
           
@@ -383,6 +440,7 @@ def main():
           '''Go back to home if weird input'''
           path_object.joint_angles = [0,-pi/2,pi/2,0]
           path_object.go_to_joint_state()
+          pub_EefState.publish(0)
           print("Back to home")
           print("============")
 
