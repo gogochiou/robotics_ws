@@ -11,9 +11,10 @@ from std_msgs.msg import Bool
 import rospkg 
 
 '''
-This version is just for check modify in "0_hanoi_free_space.py" is work
-Modify - 
-  Add redundant pose to avoid collision !! 
+This version is just for check modify in "0_hanoi_free_space.py & 0_hanoi_free_spaceV2.py" is work
+Modify -
+  Function : modify_path() , modify_pathV2() 
+  Description : Add redundant pose to avoid collision !! 
 '''
 
 '''Variable for end-effector'''
@@ -61,6 +62,8 @@ Hint:
 ###   arm   
 place_height = [Tower_base + Tower_heitght + 0.005, Tower_base + Tower_heitght*2 - Tower_overlap + offset*2, Tower_base + Tower_heitght*3 - Tower_overlap*2 + offset*3] # desire eef z position for different amount of tower in current position
 path = [] # record path
+# place_height = [0.047, 0.061, 0.075] # real???
+# place_height = [0.035, 0.048, 0.06] # Lowwer, Middle, Upper
 cap_dict = {"A":0, "B":0, "C":0} # record capacity
 pose_dict = {"A":[0.25, 0.15], "B":[0.25, 0], "C":[0.25, -0.15]} # tower base xy position
 via_point_offset = 0.01
@@ -458,6 +461,41 @@ def modify_path():
         path.insert(ii+2, pose_downlift)
         add_pose = add_pose + 2
 
+def modify_pathV2():
+    global cap_dict, path, place_height, pose_dict, via_point_offset
+    print("Modify path start!")
+    add_pose = 0
+    L = len(path)
+    for i in range(L-1):
+      # path will add some pose each for loop, ii is origin pose index in origin path list
+      print(i)
+      ii = i + add_pose
+
+      # add via point -> Z offset of source
+      print(path[ii])
+      pose_uplift = list(path[ii])
+      pose_uplift[3] = "keep"
+
+      # add via point -> Z offset of destination
+      pose_downlift = list(path[ii+1])
+      pose_downlift[3] = "keep"
+
+      # add via point -> B have two tower, we need to avoid collision
+      auxiliary = find_missing_letter(path[ii][5], path[ii+1][5])
+      cur_cap = path[ii][6]
+      heighest = max(path[ii][2], path[ii+1][2])
+      if (auxiliary == "B") and (cur_cap["B"] != 0) and (path[ii][3]=="suck"):
+        heighest = max(heighest, place_height[cur_cap["B"]])
+
+      heighest = heighest + via_point_offset
+      pose_uplift[2] = heighest
+      pose_downlift[2] = heighest
+      
+      # add pose into path list
+      path.insert(ii+1, pose_uplift)
+      path.insert(ii+2, pose_downlift)
+      add_pose = add_pose + 2
+
 def demo():
 
   try:
@@ -568,7 +606,8 @@ def main():
     cap_dict[source] = 3
     print(cap_dict)
     hanoi(height, source, auxiliary,destination)
-    modify_path()
+    # modify_path()
+    modify_pathV2()
     # print(path)
     print("End hanoi calculation")
     print "Total Step : ", len(path)/2
