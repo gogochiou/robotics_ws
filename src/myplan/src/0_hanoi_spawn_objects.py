@@ -531,6 +531,9 @@ def main():
 
       path.pop(0)
     
+    # Go back home position
+    pathPlanObject.joint_angles = [0,-pi/2,pi/2,0]
+    pathPlanObject.go_to_joint_state()
     print("End Moving")
 
   except rospy.ROSInterruptException:
