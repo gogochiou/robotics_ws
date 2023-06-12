@@ -40,12 +40,13 @@ Hanoi tower param -
 ### A  B  C
 ###    ^     (arm direction)     
 ###   arm
-offset = 0.005   
-place_height = [Tower_base + Tower_heitght + 0.005, Tower_base + Tower_heitght*2 - Tower_overlap + offset*2, Tower_base + Tower_heitght*3 - Tower_overlap*2 + offset*3] # desire eef z position for different amount of tower in current position
 path = [] # record path
+# place_height = [0.047, 0.061, 0.075] # real???
+place_height = [0.035, 0.048, 0.06] # Lowwer, Middle, Upper
 cap_dict = {"A":0, "B":0, "C":0} # record capacity
-pose_dict = {"A":[0.25, 0.15], "B":[0.25, 0], "C":[0.25, -0.15]} # tower base xy position
-via_point_offset = 0.01
+pose_dict = {"A":[0.24, 0.19], "B":[0.248, 0.008], "C":[0.253, -0.156]} # tower base xy position
+via_point_offset = 0.04 # for all via point
+extra_via_point_offset = 0.00 # extra for "B" have tower
 
 '''
 Hint:
